@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Make an AJAX request to fetch products
+            $.ajax({
+                url: '/api/products',
+                type: 'GET',
+                success: function (products) {
+                    // Handle the received product data
+                    //displayProducts(products);
+                },
+                error: function () {
+                    console.error('Error fetching product data');
+                }
+            });
+
+            // Function to display products on the page
+            function displayProducts(products) {
+                var productList = $('#product-list');
+
+                // Iterate through the products and append them to the page
+                $.each(products, function (index, product) {
+                    // Create an anchor tag around the product card
+                    var productCard = $('<a href="/api/products/' + product.id + '" class="col-md-4 mb-4 product-card">');
+                    productCard.append('<div class="card">');
+
+                    // Use the onerror attribute to handle image loading errors
+                    productCard.append('<img src="' + product.imageUrl + '" class="card-img-top" alt="Product Image" onerror="setDefaultImage(this)" style="width: 100%; height: 200px;">');
+
+                    productCard.append('<div class="card-body">');
+                    productCard.append('<h5 class="card-title">' + product.name + '</h5>');
+                    productCard.append('<p class="card-text">' + product.description + '</p>');
+                    productCard.append('<p class="card-text">Price: ' + product.price + '</p>');
+                    productCard.append('<button class="btn btn-primary">Add to Cart</button>');
+                    productCard.append('</div></div></a>');
+
+                    productList.append(productCard);
+                });
+            }
+
+            // Function to display categories in the category box
+            function displayCategories(categories) {
+                var categoryBox = $('#category-box');
+
+                // Iterate through the categories and append checkboxes to the category box
+                $.each(categories, function (index, category) {
+                    var checkbox = $('<div class="form-check">');
+                    checkbox.append('<input class="form-check-input" type="checkbox" name="category" value="' + category.name + '" id="' + category.id + '">');
+                    checkbox.append('<label class="form-check-label" for="' + category.id + '">' + category.name + '</label>');
+
+                    categoryBox.append(checkbox);
+                });
+            }
+
+            // Function to set a default image on error
+            window.setDefaultImage = function (element) {
+                element.src = '/css/images/default.png'; // Update the path to your default image
+            };
+        });
+    </script>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Daily Mart</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/my-store">My Store</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cart/view">
+                        Cart <span class="badge bg-secondary" th:text="${cartItemCount}"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/profile">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}">Logout</a>
+                </li>
+                <!-- Search form -->
+                <li class="nav-item">
+                    <form class="form-inline my-2 my-lg-0" th:action="@{/}" method="get">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"
+                               name="searchKeyword">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<h1>Welcome to the Dashboard</h1>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Category Box -->
+        <div class="col-md-2 mt-4">
+            <form th:action="@{/}" method="get">
+                <h4>Categories</h4>
+                <div th:each="category : ${categories}">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="selectedCategories"
+                               th:value="${category.id}" id="category${category.id}">
+                        <label class="form-check-label" th:for="${'category' + category.id}" th:text="${category.name}"></label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Apply Filters</button>
+            </form>
+        </div>
+
+        <!-- Product List -->
+        <div class="col-md-10 mt-4">
+            <div id="product-list" class="row">
+                <!-- Product cards will be dynamically added here -->
+                <div th:each="product : ${products}" class="col-md-4 mb-4 product-card">
+                    <div class="card">
+                        <!-- Product image -->
+                        <img th:src="${product.imageUrl}" class="card-img-top" alt="Product Image" onerror="setDefaultImage(this)" style="width: 100%; height: 200px;">
+                        <div class="card-body">
+                            <a th:href="@{'/api/products/' + ${product.id}}" style="text-decoration: none; color: inherit;">
+                            <!-- Product name -->
+                            <h5 class="card-title" th:text="${product.name}"></h5>
+                            </a>
+                            <!-- Product description -->
+                            <p class="card-text" th:text="${product.description}"></p>
+                            <!-- Product price -->
+                            <p class="card-text">Price: $<span th:text="${product.price}"></span></p>
+                            <!-- Check if the product is in the cart -->
+                            <div th:if="${product.inCurrentUserCart}">
+                                <form id="removeFromCartForm" th:action="@{/api/products/remove-from-cart-from-dashboard/{productId}(productId=${product.id})}" method="post">
+                                    <button class="btn btn-danger" type="submit">Remove from Cart</button>
+                                </form>
+                            </div>
+                            <div th:unless="${product.inCurrentUserCart}">
+                                <form id="addToCartForm" th:action="@{/api/products/add-to-cart-from-dashboard/{productId}(productId=${product.id})}" method="post">
+                                    <input type="hidden" id="quantityInput" name="quantity" th:value="${1}" />
+                                    <button class="btn btn-primary" type="submit">Add to Cart</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

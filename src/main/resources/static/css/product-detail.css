@@ -1,0 +1,61 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+nav {
+    background-color: #232f3e;
+    color: #ffffff;
+    padding: 10px 0;
+}
+
+nav a {
+    color: #ffffff;
+    margin-right: 15px;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+.product-details {
+    display: flex;
+}
+
+.product-image {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.product-info {
+    flex: 2; /* Adjust the flex value as needed */
+}
+
+.product-info h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.product-info p {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.quantity-section {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.quantity-input {
+    width: 30px;
+    text-align: center;
+    margin-right: 10px;
+}
+
+.btn-quantity {
+    cursor: pointer;
+}
+
+.btn-primary {
+    margin-top: 20px;
+}

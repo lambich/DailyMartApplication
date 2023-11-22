@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product to Market</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Daily Mart</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/my-store">My Store</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cart/view">
+                        Cart <span class="badge bg-secondary" th:text="${cartItemCount}"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/profile">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2>My Store</h2>
+    <!-- Button to trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addProductModal">
+        Add New Product
+    </button>
+    <!-- Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Product to Market</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form for adding a new product -->
+                    <form th:action="@{/my-store/add-product}" method="post">
+                        <!-- Your form fields go here -->
+                        <div class="form-group">
+                            <label for="productName">Product Name:</label>
+                            <input type="text" class="form-control" id="productName" name="productName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productDescription">Product Description:</label>
+                            <textarea class="form-control" id="productDescription" name="productDescription" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="productPrice">Product Price:</label>
+                            <input type="number" class="form-control" id="productPrice" name="productPrice" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productQuantity">Product Quantity:</label>
+                            <input type="number" class="form-control" id="productQuantity" name="productQuantity" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierName">Supplier Name:</label>
+                            <input type="text" class="form-control" id="supplierName" name="supplierName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="category">Category:</label>
+                            <select class="form-control" id="category" name="categoryId" required>
+                                <!-- Add Thymeleaf iteration for categories -->
+                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="productImageUrl">Product Image URL:</label>
+                            <input type="text" class="form-control" id="productImageUrl" name="productImageUrl" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Product</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Display products in a horizontal layout -->
+    <div class="container mt-5">
+        <!-- Thymeleaf iteration over products -->
+        <div class="row mt-4">
+            <div th:each="product : ${products}" class="col-md-12 mb-4">
+                <div class="card shadow-sm">
+                    <div class="row no-gutters">
+                        <!-- Product image on the left -->
+                        <div class="col-md-4">
+                            <img th:src="${product.imageUrl}" class="card-img" style="height: 100px;" alt="Product Image">
+                        </div>
+                        <!-- Product information on the right -->
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${product.name}"></h5>
+                                <p class="card-text" th:text="${product.description}"></p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">Price: $<span th:text="${product.price}"></span></small>
+                                    <small class="text-muted">Quantity: <span th:text="${product.quantity}"></span></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

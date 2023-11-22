@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Shopping Cart</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-ezq2I0a3SdhpHTGywyE2hE4jEedPynpNJgI8P1P0iK2GGHST1geC81ahN0qCCtR" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Daily Mart</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/my-store">My Store</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cart/view">
+                        Cart <span class="badge bg-secondary" th:text="${cartItemCount}"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/profile">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container mt-4">
+    <h2>Your Shopping Cart</h2>
+
+    <!-- Display cart details and form using Thymeleaf -->
+    <div th:if="${not #lists.isEmpty(cart.cartItems)}" class="row">
+
+        <!-- Cart Items on the left -->
+        <div class="col-md-8">
+            <div th:each="item, itemStat : ${cart.cartItems}" class="card mb-3" style="max-width: 540px;">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        <!-- Product Image -->
+                        <img th:src="${item.product.imageUrl}" class="card-img" alt="Product Image">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <!-- Product Name -->
+                            <h5 class="card-title" th:text="${item.product.name}"></h5>
+                            <!-- Product Price -->
+                            <p class="card-text" th:text="${'Price: $' + item.product.price}"></p>
+                            <!-- Product Quantity with plus and minus buttons -->
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity(${itemStat.index})">-</button>
+                                </div>
+                                <input id="quantity(${itemStat.index})" type="text" class="form-control text-center" th:value="${item.quantity}">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity(${itemStat.index})">+</button>
+                                </div>
+                            </div>
+                            <!-- Total Price for the item -->
+                            <p class="card-text" th:text="${'Total: $' + item.calculateTotal()}"></p>
+                            <!-- Remove Item Button -->
+                            <form id="removeFromCartForm" th:action="@{/api/products/remove-in-cart/{productId}(productId=${item.product.id})}" method="post">
+                                <button class="btn btn-danger" type="submit">Remove from Cart</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Shipping Address and Note Form on the right -->
+        <div class="col-md-4">
+            <form action="/checkout" method="post">
+                <div class="form-group">
+                    <label for="shippingAddress">Shipping Address</label>
+                    <textarea class="form-control" id="shippingAddress" name="shippingAddress" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="note">Note</label>
+                    <textarea class="form-control" id="note" name="note" rows="3"></textarea>
+                </div>
+                <!-- Total Order Price -->
+                <div class="text-right mb-3">
+                    <h5>Total Order: $<span th:text="${cart.calculateTotalOrder()}"></span></h5>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg btn-block">Proceed to Checkout</button>
+            </form>
+        </div>
+
+    </div>
+
+    <div th:if="${#lists.isEmpty(cart.cartItems)}">
+        <p>Your cart is empty.</p>
+    </div>
+
+</div>
+<script>
+    function increaseQuantity(index) {
+        var quantityInput = document.getElementById('quantity(' + index + ')');
+        var currentQuantity = parseInt(quantityInput.value);
+        quantityInput.value = currentQuantity + 1;
+
+        // You can add additional logic here to update the total dynamically
+        updateTotal();
+    }
+
+    function decreaseQuantity(index) {
+        var quantityInput = document.getElementById('quantity(' + index + ')');
+        var currentQuantity = parseInt(quantityInput.value);
+        if (currentQuantity > 1) {
+            quantityInput.value = currentQuantity - 1;
+
+            // You can add additional logic here to update the total dynamically
+            updateTotal();
+        }
+    }
+
+    function updateTotal() {
+        // Add logic to update the total product and total order amounts dynamically
+        // You can use JavaScript to fetch the values, perform calculations, and update the DOM
+        // Example: var totalProduct = calculateTotalProduct();
+        // Example: var totalOrder = calculateTotalOrder();
+        // Example: document.getElementById('totalProduct').innerText = totalProduct;
+        // Example: document.getElementById('totalOrder').innerText = totalOrder;
+    }
+</script>
+<!-- Add Bootstrap JS and Popper.js scripts -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UJkW9+JDA6IoIepVX8IevWy4UqGw9IKRMak0EAg5GQ8mEyjjl3hZ4aiKsbp5JMWo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

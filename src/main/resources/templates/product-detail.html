@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Include necessary stylesheets and scripts -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Add additional styles or scripts as needed -->
+    <link rel="stylesheet" href="css/product-detail.css">
+    <title>Product Detail</title>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Daily Mart</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/my-store">My Store</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cart/view">
+                        Cart <span class="badge bg-secondary" th:text="${cartItemCount}"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/profile">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Content -->
+<div class="container">
+    <h1>Product Detail</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Product Image on the left -->
+            <div class="product-image">
+                <img th:src="${product.imageUrl}" alt="Product Image" class="img-fluid">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <!-- Product Info on the right -->
+            <div class="product-info">
+                <h1 th:text="${product.name}"></h1>
+                <p th:text="${product.description}"></p>
+                <p th:text="'Price: $' + ${product.price}"></p>
+                <p th:text="'Supplier: ' + ${product.supplierName}"></p>
+                <div th:if="${user}">
+                    <p th:text="'Sold by: ' + ${user.getUserName()}"></p>
+                    <!-- Check if the product is in the cart for the user -->
+                    <div class="quantity-section">
+                        <button type="button" class="btn btn-quantity btn-primary" onclick="decreaseQuantity()">-</button>
+                        <input type="text" id="quantity" name="quantity" class="quantity-input" style="width: 40px"
+                               th:value="${1}" readonly>
+                        <button type="button" class="btn btn-quantity btn-primary" onclick="increaseQuantity()">+</button>
+                    </div>
+                    <div th:if="${productInCart}">
+                        <form id="removeFromCartForm"
+                              th:action="@{/api/products/remove-from-cart/{productId}(productId=${product.id})}"
+                              method="post">
+                            <button class="btn btn-danger" type="submit">Remove from Cart</button>
+                        </form>
+                    </div>
+                    <div th:unless="${productInCart}">
+                        <form id="addToCartForm"
+                              th:action="@{/api/products/add-to-cart/{productId}(productId=${product.id})}"
+                              method="post">
+                            <input type="hidden" id="quantityInput" name="quantity" th:value="${1}" />
+                            <button class="btn btn-primary" type="submit" onclick="updateQuantity()">Add to Cart</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Include Bootstrap JS and Popper.js -->
+<script src="https://code.jquery.com/jquery-3.6.4.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    function decreaseQuantity() {
+        var currentQuantity = parseInt(document.getElementById('quantity').value);
+        if (currentQuantity > 1) {
+            document.getElementById('quantity').value = currentQuantity - 1;
+        }
+    }
+
+    function increaseQuantity() {
+        var currentQuantity = parseInt(document.getElementById('quantity').value);
+        document.getElementById('quantity').value = currentQuantity + 1;
+    }
+    function updateQuantity() {
+        // Update the hidden input field with the current quantity
+        document.getElementById('quantityInput').value = document.getElementById('quantity').value;
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+/* src/main/resources/static/css/dashboard.css */
+
+/* Apply styles to the product card container */
+#product-list .product-card {
+    /*border: 1px solid #ddd; *//* Border around each product card */
+    border-radius: 8px; /* Rounded corners */
+    margin-bottom: 20px; /* Spacing between cards */
+    overflow: hidden; /* Hide overflow content (e.g., if the image is too large) */
+    transition: transform 0.3s ease; /* Smooth transition on hover */
+}
+
+/* Scale up the card on hover */
+#product-list .product-card:hover {
+    transform: scale(1.05);
+}
+
+/* Style the product card image */
+#product-list .product-card img {
+    max-width: 100%; /* Ensure the image doesn't exceed the container width */
+    height: auto; /* Maintain the image's aspect ratio */
+    border-bottom: 1px solid #ddd; /* Border at the bottom of the image */
+}
+
+/* Style the product card body */
+#product-list .product-card .card-body {
+    padding: 1rem;
+}
+
+/* Style the product card title */
+#product-list .product-card .card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+/* Style the product card text */
+#product-list .product-card .card-text {
+    color: #666;
+}
+
+/* Style the product card button */
+#product-list .product-card .btn-primary {
+    background-color: #007bff;
+    border: none;
+    padding: 0.5rem 1rem;
+    color: #fff;
+}
+
+#product-list .product-card .btn-primary:hover {
+    background-color: #0056b3;
+}

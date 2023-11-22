@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Daily Mart</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/my-store">My Store</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cart/view">
+                        Cart <span class="badge bg-secondary" th:text="${cartItemCount}"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/profile">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2>User Profile</h2>
+
+    <!-- Thymeleaf expression to display user information -->
+    <p th:text="'Username: ' + ${user.userName}"></p>
+    <p th:text="'Email: ' + ${user.email}"></p>
+    <!-- Add more fields as needed -->
+
+    <!-- Display the list of orders -->
+    <h3>User Orders</h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Order Date</th>
+            <th>Delivery Date</th>
+            <th>Order status</th>
+            <th>Shipping Address</th>
+            <th>Note</th>
+            <th>Total Amount</th>
+            <th>Action</th> <!-- Add an action column for viewing order items -->
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${userOrders}">
+            <td th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+            <td th:text="${#dates.format(order.deliveryDate, 'yyyy-MM-dd')}"></td>
+            <td th:text="${order.orderStatus}"></td>
+            <td th:text="${order.shippingAddress}"></td>
+            <td th:text="${order.notes}"></td>
+            <td th:text="${order.totalAmount}"></td>
+            <td>
+                <!-- Button to trigger the modal -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" th:data-target="'#orderModal' + ${order.id}">
+                    View Order Items
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" th:id="'orderModal' + ${order.id}" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="orderModalLabel">Order Items</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Display order items here -->
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <!-- Add more columns as needed -->
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="orderItem : ${order.orderItems}">
+                                        <td th:text="${orderItem.product.name}"></td>
+                                        <td th:text="${orderItem.quantity}"></td>
+                                        <td th:text="${orderItem.product.price}"></td>
+                                        <!-- Add more columns as needed -->
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <!-- Button to confirm receipt -->
+                                <form th:action="@{'/orders/confirm-receipt/' + ${order.id}}" method="post">
+                                    <button type="submit" class="btn btn-primary" th:unless="${order.orderStatus == 'RECEIVED'}">Confirm Receipt</button>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+</div>
+
+<!-- Add your JS scripts or links here -->
+<script src="https://code.jquery.com/jquery-3.6.4.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

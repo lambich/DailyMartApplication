@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)https://getbootstrap.com/docs/4.0/examples/navbars/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/navbars/">
+
+  <!-- Bootstrap -->
+  <link href="" rel="stylesheet" th:href="@{/static/css/bootstrap.min.css}">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <!--  jQuery  -->
+  <script type="text/javascript" src="../static/js/jQuery/jquery-2.1.1.min.js"></script>
+<body>
+
+<nav class="navbar navbar-expand navbar-dark bg-dark d-flex flex-row">
+  <a class="navbar-brand " href="/">Grouping Now</a>
+
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/events">Events</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/viewGroups">Groups</a>
+      </li>
+      <li class="nav-item" sec:authorize="isAnonymous()">
+        <a class="nav-link" href="/login">Log in</a>
+      </li>
+      <li class="nav-item" sec:authorize="isAuthenticated()">
+        <!--  <span sec:authentication="name">-->
+        <a class="nav-link" href="/userProfile"><span th:text="${user}"></span></a>
+      </li>
+      <li class="nav-item" sec:authorize="isAuthenticated()">
+        <a class="nav-link" href="/logout">Log out</a>
+      </li>
+    </ul>
+  </div>
+
+  <div>
+    <form class="form-inline my-md-2">
+      <select class="form-select" aria-label="Default select example">
+        <option selected value="0">Event</option>
+        <option value="1">Group</option>
+      </select>
+      <input class="form-control m-2" type="text" placeholder="Search">
+      <button type="button" class="btn btn-primary">Search</button>
+    </form>
+  </div>
+</nav>
+
+<!--**************************************Body Div*************************************-->
+<div class="container-fluid">
+  <div class="row mt-2 ml-2 mr-2 mb-2">
+    <div class="col-sm-4">
+      <h2>Group Tracking</h2>
+      <div class="card list-group-item" style="width:500px" th:each="g : ${groups}">
+        <img class="card-img-top" th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}"/>
+        <div class="card-body">
+          <h5 class="card-title" th:text="'Event Name:'+${g.name}"></h5>
+          <p class="card-text" th:text="${g.category}"></p>
+          <p class="card-text" th:text="${g.study}"></p>
+          <p class="card-text" th:text="${g.admins}"></p>
+          <p class="card-text" th:text="${g.invites}"></p>
+          <p class="card-text" th:text="${g.description}"></p>
+          <p class="card-text" th:text="${g.chat}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="row" th:each="g : ${groups}">
+        <h2>Event Tracking</h2>
+        <a th:href = "@{/leaveGroup/{id}(id=${g.id})}" class="btn btn-danger btn-sm mb-1 mt-1" style="margin-left: 60px"
+           th:data-confirm-delete="|Are you sure you want to leave this group ?|"
+           onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false">Leave Group</a><hr>
+      </div>
+      <div class="row" style="display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+    margin-top: 60px; margin-bottom: 80px;">
+      <div class="container" style="margin-left: 100px; margin-right: 100px; margin-top: 90px; " id="event-deck">
+
+      </div>
+        <div id="Pagination-event" class="pagination" style="display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+    margin-top: 60px; margin-bottom: 80px;"></div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <h2 th:text="'Host '"></h2>
+      <div class="card list-group-item" style="width:500px" th:each="h : ${hosts}">
+        <div class="row">
+          <div class="col-sm-3">
+            <img class="card-img-top" style="width:70px" th:src="'data:image/jpeg;base64,'+${h.getBase64Encoded()}"/>
+          </div>
+          <div class="col-sm-9">
+            <div class="card-body">
+              <h5 class="card-title" th:text="${h.firstName} + ' ' + ${h.lastName}"></h5>
+              <p class="card-text" th:text="${h.email}"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <h2 th:text="'Participants: ' + ${#lists.size(users)}"></h2>
+      <div class="card list-group-item" style="width:500px" th:each="g, state : ${users}">
+        <div class="row">
+          <div class="col-sm-3">
+            <img class="card-img-top" style="width:70px" th:src="'data:image/jpeg;base64,'+${g.getBase64Encoded()}"/>
+          </div>
+          <div class="col-sm-9">
+            <div class="card-body">
+              <h5 class="card-title" th:text="${g.firstName} + ' ' + ${g.lastName}"></h5>
+              <p class="card-text" th:text="${g.email}"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--**************************************Footer*************************************-->
+<footer class="page-footer font-small bg-dark mb-0">
+  <div class="footer-copyright text-center py-3 text-white">© 2022 Copyright:
+    <a >groupingnow.ca</a>
+  </div>
+</footer>
+<!-- ******************************************************************************** -->
+<script>
+  //总的function,用来调用各个细分的function
+  function generateEventPagination(){
+    //获取Event分页数据
+    var resultEntity=getPageInfoEvent();
+
+    //填充Event表格
+    fillEventCardDeck(resultEntity.data);
+
+    //调用分页导航栏生成函数
+    generateNavigationBarEvent(resultEntity);
+  }
+
+  //获取pageInfo函数
+  function getPageInfoEvent(){
+    var res;
+
+    $.ajax({
+      url: "/eventOfGroup/paginated",
+      type: "post",
+      data: {
+        "pageNum": window.eventPageNum,
+        "pageSize": window.eventPagesize,
+        "groupId": [[${groups.id}]]
+      },
+      dataType: "json",
+      async: false,
+      success: function(response){
+        res=response;
+      },
+      error: function(response){
+        res=response;
+      }
+    });
+
+    return res;
+  }
+
+  //生成表格函数
+  function fillEventCardDeck(list){
+    //清除tbody中原有数据
+    $("#event-deck").empty();
+
+    //清空分页导航条
+    $("#Pagination-event").empty();
+
+    if(list==null || list.length==0){
+      $("#event-deck").append("<tr><td colspan='4'>No data found for you</td></tr>");
+      return;
+    }
+
+    for(var i=0;i<list.length;i++){
+      var eventName=list[i].eventName;
+      var description=list[i].description;
+      var id=list[i].id;
+
+      //Card Body
+      var eventNameH5="<h5 class='card-title'>"+eventName+"</h5>";
+      var discriptionP="<p class='card-text'>"+description+"</p>";
+      var findDetailsA="<a href='/findDetailsEvent/" + [[${groups.id}]] +"/"+id+"' class='btn btn-primary'>Find Details</a>"
+      var cardBody="<div class=\"card-body\" style=''>"+eventNameH5+discriptionP+findDetailsA+"</div>";
+
+      //Card
+      var card="<div class=\"card\">"+cardBody+"</div>";
+
+      $("#event-deck").append(card);
+    }
+  }
+
+  //分页导航栏生成函数
+  function generateNavigationBarEvent(resultEntity){
+    //获得role记录的总数
+    var totalRecord=resultEntity.totalRecords;
+
+    //声明一个属性设置pagination函数所需的属性
+    var properties={
+      num_edge_entries: 1,        //边缘页数量
+      num_display_entries: 3,     //主体页数量
+      callback: pageSelectCallbackEvent,       //用户点击页码时，调用这个函数进行跳转
+      items_per_page: window.eventPagesize,
+      current_page: window.eventPageNum-1,   //Pagination内部使用pageIndex(从0开始），而pageNum从1开始
+      prev_text: "Previous",
+      next_text: "Next"
+    };
+
+    $("#Pagination-event").pagination(totalRecord, properties);
+  }
+
+  //用户点击页码时，调用这个函数进行跳转
+  function pageSelectCallbackEvent(pageIndex, jQuery){
+    //计算pageNum
+    window.eventPageNum=pageIndex+1;
+
+    //调用分页函数
+    generateEventPagination();
+
+    //由于每一个页码按钮都是超链接，它默认跳转到上面的地址，但是那是不正确的，因为没有加host和contextPath。
+    //我们要取消超链接的默认行为
+    return false;
+  }
+
+  $(function() {
+    window.eventPageNum = 1;
+    window.eventPagesize = 4;
+
+    //调用Event分页函数
+    generateEventPagination();
+  });
+</script>
+</body>
+</html>
